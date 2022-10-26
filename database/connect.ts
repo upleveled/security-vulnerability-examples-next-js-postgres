@@ -1,7 +1,7 @@
 import { config } from 'dotenv-safe';
 import postgres from 'postgres';
 
-config();
+if (process.env.NODE_ENV !== 'production') config();
 
 // Type needed for the connection function below
 declare module globalThis {

@@ -1,0 +1,90 @@
+diff --git a/node_modules/next/dist/build/webpack/plugins/next-types-plugin.js b/node_modules/next/dist/build/webpack/plugins/next-types-plugin.js
+index 8532ab0..357f3f1 100644
+--- a/node_modules/next/dist/build/webpack/plugins/next-types-plugin.js
++++ b/node_modules/next/dist/build/webpack/plugins/next-types-plugin.js
+@@ -273,7 +273,7 @@ class NextTypesPlugin {
+         if (!this.typedRoutes) return;
+         const isApp = filePath.startsWith(this.appDir + _path.default.sep);
+         // Filter out non-page files in app dir
+-        if (isApp && !/[/\\]page\.[^.]+$/.test(filePath)) {
++        if (isApp && !/[/\\](?:page|route)\.[^.]+$/.test(filePath)) {
+             return;
+         }
+         // Filter out non-page files in pages dir
+@@ -306,7 +306,7 @@ class NextTypesPlugin {
+             const relativePathToApp = _path.default.relative(this.appDir, mod.resource);
+             const relativePathToRoot = _path.default.relative(this.dir, mod.resource);
+             if (!this.dev) {
+-                if (IS_PAGE) {
++                if (IS_PAGE || /[/\\]route\.[^.]+$/.test(mod.resource)) {
+                     this.collectPage(mod.resource);
+                 }
+             }
+@@ -341,7 +341,7 @@ class NextTypesPlugin {
+                     chunkGroup.chunks.forEach((chunk)=>{
+                         if (!chunk.name) return;
+                         // Here we only track page chunks.
+-                        if (!chunk.name.startsWith("pages/") && !(chunk.name.startsWith("app/") && chunk.name.endsWith("/page"))) {
++                        if (!chunk.name.startsWith("pages/") && !(chunk.name.startsWith("app/") && (chunk.name.endsWith("/page") || chunk.name.endsWith('/route')))) {
+                             return;
+                         }
+                         const chunkModules = compilation.chunkGraph.getChunkModulesIterable(chunk);
+diff --git a/node_modules/next/dist/client/components/layout-router.js b/node_modules/next/dist/client/components/layout-router.js
+index 9b60a45..dd0639d 100644
+--- a/node_modules/next/dist/client/components/layout-router.js
++++ b/node_modules/next/dist/client/components/layout-router.js
+@@ -317,6 +317,7 @@ function HandleRedirect({ redirect  }) {
+     const router = (0, _navigation).useRouter();
+     (0, _react).useEffect(()=>{
+         router.replace(redirect, {});
++        router.refresh()
+     }, [
+         redirect,
+         router
+diff --git a/node_modules/next/dist/client/link.js b/node_modules/next/dist/client/link.js
+index d15ce7f..369e036 100644
+--- a/node_modules/next/dist/client/link.js
++++ b/node_modules/next/dist/client/link.js
+@@ -83,6 +83,7 @@ function linkClicked(e, router, href, as, replace, shallow, scroll, locale, isAp
+     if (isAppRouter) {
+         // @ts-expect-error startTransition exists.
+         _react.default.startTransition(navigate);
++        router.refresh()
+     } else {
+         navigate();
+     }
+diff --git a/node_modules/next/dist/server/initialize-require-hook.js b/node_modules/next/dist/server/initialize-require-hook.js
+index 774f9e1..e644086 100644
+--- a/node_modules/next/dist/server/initialize-require-hook.js
++++ b/node_modules/next/dist/server/initialize-require-hook.js
+@@ -1,7 +1,7 @@
+ "use strict";
+ var _requireHook = require("../build/webpack/require-hook");
+ (0, _requireHook).loadRequireHook();
+-const isPrebundled = false;
++const isPrebundled = true;
+ if (isPrebundled) {
+     (0, _requireHook).overrideBuiltInReactPackages();
+ }
+diff --git a/node_modules/next/dist/server/web/spec-extension/response.d.ts b/node_modules/next/dist/server/web/spec-extension/response.d.ts
+index 268f52b..6ef065b 100644
+--- a/node_modules/next/dist/server/web/spec-extension/response.d.ts
++++ b/node_modules/next/dist/server/web/spec-extension/response.d.ts
+@@ -2,14 +2,15 @@ import type { I18NConfig } from '../../config-shared';
+ import { NextURL } from '../next-url';
+ import { ResponseCookies } from './cookies';
+ declare const INTERNALS: unique symbol;
+-export declare class NextResponse extends Response {
++export declare class NextResponse<B = void> extends Response {
+     [INTERNALS]: {
+         cookies: ResponseCookies;
+         url?: NextURL;
++        B: B
+     };
+     constructor(body?: BodyInit | null, init?: ResponseInit);
+     get cookies(): ResponseCookies;
+-    static json(body: any, init?: ResponseInit): NextResponse;
++    static json<T>(body: T, init?: ResponseInit): NextResponse<T>;
+     static redirect(url: string | NextURL | URL, init?: number | ResponseInit): NextResponse;
+     static rewrite(destination: string | NextURL | URL, init?: MiddlewareResponseInit): NextResponse;
+     static next(init?: MiddlewareResponseInit): NextResponse;

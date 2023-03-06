@@ -1,0 +1,21 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--main-text-color);
+}
+
+header > nav {
+  &,
+  > div:last-child {
+    display: flex;
+    gap: 15px;
+  }
+
+  > div:last-child {
+    margin-left: auto;
+  }
+}

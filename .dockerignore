@@ -1,0 +1,45 @@
+# Secrets
+*.env
+.env.test
+.env*.local
+.env.development
+
+# Scripts
+*.sql
+
+# Documentation
+README.md
+
+# Next.js build artifacts
+build
+.vercel
+.next
+
+# Tests
+playwright
+playwright.config.ts
+coverage
+*/__tests__
+jest.config.js
+
+# Dependencies
+node_modules
+yarn-debug.log
+yarn-error.log
+
+# Git and GitHub
+.git
+.github
+
+# Linting, formatting config
+.eslintcache
+.eslintignore
+.eslintrc
+prettier.config.cjs
+
+# Docker
+Dockerfile
+.dockerignore
+
+# TypeScript cache
+.tsbuildinfo

@@ -44,5 +44,5 @@ else
 SQL
 fi
 
-yarn migrate up
-yarn start
+pnpm migrate up
+pnpm start

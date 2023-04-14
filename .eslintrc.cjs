@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ['@upleveled/upleveled'],
+  extends: ['upleveled'],
 };

@@ -17,7 +17,6 @@
     "**/*.jsx",
     "**/*.cjs",
     "**/*.mjs",
-    ".next/types/**/*.ts",
-    "next.d.ts"
+    ".next/types/**/*.ts"
   ]
 }

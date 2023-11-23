@@ -6,10 +6,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "jsx": "preserve"
   },
   "include": [
-    "**/.eslintrc.cjs",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
